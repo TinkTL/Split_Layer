@@ -1,0 +1,131 @@
+{
+  "total_layers": 7,
+  "layers": [
+    {
+      "layer_id": 1,
+      "file_path": "E:/Split_Layer/output\\1738743179921_sample_image_layer_1.png",
+      "position": {
+        "top_left": [
+          0,
+          13
+        ],
+        "bottom_right": [
+          537,
+          514
+        ],
+        "center": [
+          249,
+          234
+        ]
+      }
+    },
+    {
+      "layer_id": 2,
+      "file_path": "E:/Split_Layer/output\\1738743179921_sample_image_layer_2.png",
+      "position": {
+        "top_left": [
+          143,
+          516
+        ],
+        "bottom_right": [
+          393,
+          635
+        ],
+        "center": [
+          268,
+          570
+        ]
+      }
+    },
+    {
+      "layer_id": 3,
+      "file_path": "E:/Split_Layer/output\\1738743179921_sample_image_layer_3.png",
+      "position": {
+        "top_left": [
+          233,
+          560
+        ],
+        "bottom_right": [
+          576,
+          1144
+        ],
+        "center": [
+          417,
+          876
+        ]
+      }
+    },
+    {
+      "layer_id": 4,
+      "file_path": "E:/Split_Layer/output\\1738743179921_sample_image_layer_4.png",
+      "position": {
+        "top_left": [
+          25,
+          635
+        ],
+        "bottom_right": [
+          191,
+          769
+        ],
+        "center": [
+          109,
+          702
+        ]
+      }
+    },
+    {
+      "layer_id": 5,
+      "file_path": "E:/Split_Layer/output\\1738743179921_sample_image_layer_5.png",
+      "position": {
+        "top_left": [
+          110,
+          885
+        ],
+        "bottom_right": [
+          211,
+          980
+        ],
+        "center": [
+          160,
+          934
+        ]
+      }
+    },
+    {
+      "layer_id": 6,
+      "file_path": "E:/Split_Layer/output\\1738743179921_sample_image_layer_6.png",
+      "position": {
+        "top_left": [
+          0,
+          992
+        ],
+        "bottom_right": [
+          214,
+          1310
+        ],
+        "center": [
+          88,
+          1153
+        ]
+      }
+    },
+    {
+      "layer_id": 7,
+      "file_path": "E:/Split_Layer/output\\1738743179921_sample_image_layer_7.png",
+      "position": {
+        "top_left": [
+          252,
+          1190
+        ],
+        "bottom_right": [
+          515,
+          1381
+        ],
+        "center": [
+          382,
+          1284
+        ]
+      }
+    }
+  ]
+}
