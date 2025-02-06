@@ -3,127 +3,127 @@
   "layers": [
     {
       "layer_id": 1,
-      "file_path": "E:/Split_Layer/output\\1738746434903_sample_image_layer_1.png",
+      "file_path": "E:/Split_Layer/output\\1738839683257_sample_image_layer_1.png",
       "position": {
         "top_left": [
-          0,
-          13
+          599,
+          161
         ],
         "bottom_right": [
-          537,
-          514
+          828,
+          236
         ],
         "center": [
-          249,
-          234
+          713,
+          198
         ]
       }
     },
     {
       "layer_id": 2,
-      "file_path": "E:/Split_Layer/output\\1738746434903_sample_image_layer_2.png",
+      "file_path": "E:/Split_Layer/output\\1738839683257_sample_image_layer_2.png",
       "position": {
         "top_left": [
-          143,
-          516
+          372,
+          162
         ],
         "bottom_right": [
-          393,
-          635
+          573,
+          237
         ],
         "center": [
-          268,
-          570
+          472,
+          199
         ]
       }
     },
     {
       "layer_id": 3,
-      "file_path": "E:/Split_Layer/output\\1738746434903_sample_image_layer_3.png",
+      "file_path": "E:/Split_Layer/output\\1738839683257_sample_image_layer_3.png",
       "position": {
         "top_left": [
-          233,
-          560
+          591,
+          402
         ],
         "bottom_right": [
-          576,
-          1144
+          601,
+          836
         ],
         "center": [
-          417,
-          876
+          595,
+          618
         ]
       }
     },
     {
       "layer_id": 4,
-      "file_path": "E:/Split_Layer/output\\1738746434903_sample_image_layer_4.png",
+      "file_path": "E:/Split_Layer/output\\1738839683257_sample_image_layer_4.png",
       "position": {
         "top_left": [
-          25,
-          635
+          347,
+          999
         ],
         "bottom_right": [
-          191,
-          769
+          836,
+          1088
         ],
         "center": [
-          109,
-          702
+          591,
+          1043
         ]
       }
     },
     {
       "layer_id": 5,
-      "file_path": "E:/Split_Layer/output\\1738746434903_sample_image_layer_5.png",
+      "file_path": "E:/Split_Layer/output\\1738839683257_sample_image_layer_5.png",
       "position": {
         "top_left": [
-          110,
-          885
+          321,
+          1141
         ],
         "bottom_right": [
-          211,
-          980
+          862,
+          1186
         ],
         "center": [
-          160,
-          934
+          591,
+          1163
         ]
       }
     },
     {
       "layer_id": 6,
-      "file_path": "E:/Split_Layer/output\\1738746434903_sample_image_layer_6.png",
+      "file_path": "E:/Split_Layer/output\\1738839683257_sample_image_layer_6.png",
       "position": {
         "top_left": [
-          0,
-          992
+          254,
+          1201
         ],
         "bottom_right": [
-          214,
-          1310
+          951,
+          1251
         ],
         "center": [
-          88,
-          1153
+          602,
+          1225
         ]
       }
     },
     {
       "layer_id": 7,
-      "file_path": "E:/Split_Layer/output\\1738746434903_sample_image_layer_7.png",
+      "file_path": "E:/Split_Layer/output\\1738839683257_sample_image_layer_7.png",
       "position": {
         "top_left": [
-          252,
-          1190
+          529,
+          1291
         ],
         "bottom_right": [
-          515,
-          1381
+          660,
+          1328
         ],
         "center": [
-          382,
-          1284
+          594,
+          1309
         ]
       }
     }
