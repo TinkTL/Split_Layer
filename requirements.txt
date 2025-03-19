@@ -4,3 +4,4 @@ torch
 Pillow
 numpy
 logging
+requests

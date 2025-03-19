@@ -5,6 +5,8 @@ from skimage.measure import label, regionprops
 import json
 import time
 import os
+import requests
+from io import BytesIO
 
 
 def load_config():
@@ -13,25 +15,55 @@ def load_config():
         return json.load(f)
 
 
-def process_image(input_image_path, min_area=1000):
-    """主要的图像处理函数"""
+def download_image(url):
+    """
+    从URL下载图片
+    Args:
+        url: 图片的URL地址
+    Returns:
+        PIL.Image对象
+    """
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # 检查请求是否成功
+        return Image.open(BytesIO(response.content))
+    except Exception as e:
+        print(f"下载图片时出错: {e}")
+        return None
+
+
+def process_image_from_url(image_url, min_area=1000):
+    """
+    从URL处理图像的主函数
+    Args:
+        image_url: 图片的URL地址
+        min_area: 最小区域面积
+    """
     config = load_config()
 
     # 确保输出目录存在
     os.makedirs(config['output_path'], exist_ok=True)
-    os.makedirs(config['output_json'], exist_ok=True)
 
-    # 读取输入图像
-    input_image = Image.open(input_image_path)
+    # 从URL下载图片
+    input_image = download_image(image_url)
+    if input_image is None:
+        print("图片下载失败")
+        return None
 
     # 处理图像
-    processed = extract_alpha_mask(input_image) if input_image.mode == 'RGBA' else input_image
+    processed = (extract_alpha_mask(input_image)
+                if input_image.mode == 'RGBA'
+                else input_image)
     masked_image = mask_text(processed)
     layers = separate_layers(masked_image, input_image, min_area)
 
-    # 保存图层和JSON
-    image_name = os.path.basename(input_image_path)
-    save_layers(layers, image_name, config['output_path'], config['output_json'])
+    # 保存图层
+    # 从URL中提取文件名，如果没有则使用时间戳
+    image_name = os.path.basename(image_url.split('?')[0])  # 移除URL参数
+    if not image_name:
+        image_name = f"image_{int(time.time())}.png"
+
+    save_layers(layers, image_name, config['output_path'])
 
     return layers
 
@@ -73,32 +105,54 @@ def separate_layers(mask_image, original_image, min_area=100):
 
 
 def create_layer(region, mask, label_image, original_image):
-    """创建单个图层"""
+    """
+    创建单个图层，只保留实际区域大小
+    """
+    # 获取区域边界框
     minr, minc, maxr, maxc = region.bbox
 
-    layer_mask = np.zeros_like(mask, dtype=bool)
-    layer_mask[minr:maxr, minc:maxc] = mask[minr:maxr, minc:maxc] & (
+    # 计算区域的实际宽度和高度
+    height = maxr - minr
+    width = maxc - minc
+
+    # 创建该区域大小的遮罩
+    region_mask = mask[minr:maxr, minc:maxc] & (
         label_image[minr:maxr, minc:maxc] == region.label
     )
 
-    layer_image = create_transparent_layer(layer_mask, original_image)
+    # 创建裁剪后的透明图层
+    layer_image = create_transparent_layer(region_mask, original_image, (minr, minc, maxr, maxc))
 
     return {
         'image': layer_image,
         'bbox': {
-            'top': minr,
-            'left': minc,
-            'bottom': maxr,
-            'right': maxc,
-            'center': region.centroid
+            'width': width,
+            'height': height,
+            'original_position': {
+                'top': minr,
+                'left': minc,
+                'bottom': maxr,
+                'right': maxc,
+                'center': region.centroid
+            }
         }
     }
 
 
-def create_transparent_layer(mask, original_image):
-    """创建透明背景的图层"""
-    original_array = np.array(original_image)
-    layer_image = np.zeros((*original_array.shape[:2], 4), dtype=np.uint8)
+def create_transparent_layer(mask, original_image, bbox):
+    """
+    创建透明背景的图层，只保留实际区域
+    """
+    minr, minc, maxr, maxc = bbox
+
+    # 获取原图中对应区域的数据
+    if original_image.mode == 'RGBA':
+        original_array = np.array(original_image)[minr:maxr, minc:maxc]
+    else:
+        original_array = np.array(original_image)[minr:maxr, minc:maxc]
+
+    # 创建对应大小的透明图层
+    layer_image = np.zeros((maxr-minr, maxc-minc, 4), dtype=np.uint8)
 
     if original_image.mode == 'RGBA':
         layer_image[mask] = original_array[mask]
@@ -118,63 +172,39 @@ def create_transparent_layer(mask, original_image):
     return layer_image
 
 
-def save_layers(layers, image_name, output_path, output_json):
+def save_layers(layers, image_name, output_path):
     """保存图层和位置信息"""
     base_name = os.path.splitext(image_name)[0]
     timestamp = int(time.time() * 1000)
 
-    layers_info = {'total_layers': len(layers), 'layers': []}
-
     for i, layer_data in enumerate(layers, 1):
-        # 保存图层图像
         filename = f"{timestamp}_{base_name}_layer_{i}.png"
         output_file = os.path.join(output_path, filename)
         Image.fromarray(layer_data['image'], 'RGBA').save(output_file)
 
-        # 记录位置信息
         layer_info = {
-            'layer_id': i,
-            'file_path': output_file,
-            'position': {
-                'top_left': [
-                    int(layer_data['bbox']['left']),
-                    int(layer_data['bbox']['top'])
-                ],
-                'bottom_right': [
-                    int(layer_data['bbox']['right']),
-                    int(layer_data['bbox']['bottom'])
-                ],
-                'center': [
-                    int(layer_data['bbox']['center'][1]),
-                    int(layer_data['bbox']['center'][0])
-                ]
-            }
+            'width': layer_data['bbox']['width'],
+            'height': layer_data['bbox']['height'],
+            'original_position': layer_data['bbox']['original_position']
         }
-        layers_info['layers'].append(layer_info)
         print_layer_info(filename, layer_info)
-
-    # 保存JSON信息
-    json_path = os.path.join(output_json, f"{base_name}_layers_info.json")
-    with open(json_path, 'w', encoding='utf-8') as f:
-        json.dump(layers_info, f, ensure_ascii=False, indent=2)
 
 
 def print_layer_info(filename, layer_info):
     """打印图层信息"""
-    print(f"\n已保存图层: {filename}")
+    print(f"\nlayer_name: {filename}")
     print(
-        f"位置信息: "
-        f"左上角({layer_info['position']['top_left'][0]}, "
-        f"{layer_info['position']['top_left'][1]}), "
-        f"右下角({layer_info['position']['bottom_right'][0]}, "
-        f"{layer_info['position']['bottom_right'][1]}), "
-        f"中心点({layer_info['position']['center'][0]}, "
-        f"{layer_info['position']['center'][1]})"
+        f"size: {layer_info['width']}x{layer_info['height']} px\n"
+        f"locate: "
+        f"({layer_info['original_position']['left']}, "
+        f"{layer_info['original_position']['top']}), "
+        f"({layer_info['original_position']['right']}, "
+        f"{layer_info['original_position']['bottom']})"
     )
 
 
 if __name__ == "__main__":
-    # 示例使用
-    config = load_config()
-    input_image_path = os.path.join(config['input_path'], "sample_image.png")
-    process_image(input_image_path, min_area=100)
+    # 从用户输入获取URL
+    image_url = "https://image.lainuoniao.cn/sample_image.png"
+    print(f"\n处理图片: {image_url}")
+    process_image_from_url(image_url, min_area=100)
